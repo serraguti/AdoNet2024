@@ -23,22 +23,81 @@ namespace AdoNet
         {
             InitializeComponent();
             this.connectionString = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=HOSPITAL;Persist Security Info=True;User ID=SA;Password=MCSD2023;";
-            this.cn = new SqlConnection();
+            this.cn = new SqlConnection(this.connectionString);
+            //VAMOS A RECUPERAR UN EVENTO DE LA CONEXION PARA QUE NOS 
+            //INDIQUE SU CAMBIO DE ESTADO
+            this.cn.StateChange += Cn_StateChange;
             this.com = new SqlCommand();
+        }
+
+        private void Cn_StateChange(object sender, StateChangeEventArgs e)
+        {
+            this.lblMensaje.Text = "La conexión está pasando de " + e.OriginalState
+                + " a " + e.CurrentState;
         }
 
         private void btnConectar_Click(object sender, EventArgs e)
         {
-            //ESTABLECEMOS LA CADENA DE CONEXION
-            this.cn.ConnectionString = this.connectionString;
-            this.cn.Open();
+            if (this.cn.State == ConnectionState.Closed)
+            {
+                this.cn.Open();
+            }
             this.lblMensaje.BackColor = Color.LightGreen;
+
+
+            //try
+            //{
+            //    if (this.cn.State == ConnectionState.Closed)
+            //    {
+            //        this.cn.Open();
+            //    }
+            //    this.lblMensaje.BackColor = Color.LightGreen;
+            //}
+            //catch (SqlException ex)
+            //{
+            //    this.lblMensaje.Text = "Excepción SQL. "
+            //        + ex.ToString();
+            //    this.lblMensaje.BackColor = Color.Red;
+            //}
         }
 
         private void btnDesconectar_Click(object sender, EventArgs e)
         {
             this.cn.Close();
             this.lblMensaje.BackColor = Color.LightCoral;
+        }
+
+        private void btnLeerDatos_Click(object sender, EventArgs e)
+        {
+            //INDICAMOS LA CONEXION QUE UTILIZARA EL COMMAND
+            this.com.Connection = this.cn;
+            //CREAMOS LA CONSULTA A REALIZAR
+            string sql = "select * from EMP";
+            //INDICAMOS EL TIPO DE CONSULTA A EJECUTAR EN EL COMMAND
+            this.com.CommandType = CommandType.Text;
+            //INDICAMOS AL COMMAND LA CONSULTA 
+            this.com.CommandText = sql;
+            //AQUI LA CONEXION DEBE ESTAR ABIERTA
+            //EJECUTAMOS LA CONSULTA DE SELECCION EN EL COMMAND
+            //DICHO METODO NOS DEVUELVE UN OBJETO DATAREADER
+            this.reader = this.com.ExecuteReader();
+            //LEEMOS EL NOMBRE DE LA PRIMERA COLUMNA
+            for (int i = 0; i < this.reader.FieldCount; i++)
+            {
+                string columna = this.reader.GetName(i);
+                string tipoDato = this.reader.GetDataTypeName(i);
+                this.lstColumnas.Items.Add(columna);
+                this.lstTiposDato.Items.Add(tipoDato);
+            }
+
+            //LEEMOS UN REGISTRO
+            while (this.reader.Read())
+            {
+                string apellido = this.reader["APELLIDO"].ToString();
+                this.lstApellidos.Items.Add(apellido);
+            }
+            //SIEMPRE DEBEMOS CERRAR EL READER DESPUES DE LEER
+            this.reader.Close();
         }
     }
 }
