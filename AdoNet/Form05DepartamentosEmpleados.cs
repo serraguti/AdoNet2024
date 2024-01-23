@@ -17,6 +17,8 @@ namespace AdoNet
         SqlConnection cn;
         SqlCommand com;
         SqlDataReader reader;
+        List<int> idsDepartamentosList;
+
 
         public Form05DepartamentosEmpleados()
         {
@@ -25,12 +27,13 @@ namespace AdoNet
             this.cn = new SqlConnection(this.connectionString);
             this.com = new SqlCommand();
             this.com.Connection = this.cn;
+            this.idsDepartamentosList = new List<int>();
             this.LoadDepartamentos();
         }
 
         private void LoadDepartamentos()
         {
-            string sql = "select DNOMBRE from DEPT";
+            string sql = "select DNOMBRE, DEPT_NO from DEPT";
             this.com.CommandType = CommandType.Text;
             this.com.CommandText = sql;
             this.cn.Open();
@@ -38,6 +41,8 @@ namespace AdoNet
             while (this.reader.Read())
             {
                 this.lstDepartamentos.Items.Add(this.reader["DNOMBRE"].ToString());
+                int id = int.Parse(this.reader["DEPT_NO"].ToString());
+                this.idsDepartamentosList.Add(id);
             }
             this.reader.Close();
             this.cn.Close();
@@ -45,13 +50,19 @@ namespace AdoNet
 
         private void lstDepartamentos_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string sql = "select EMP.APELLIDO from EMP " +
-                " inner join DEPT on EMP.DEPT_NO = DEPT.DEPT_NO "
-                + " where DEPT.DNOMBRE=@nombredepartamento";
-            string nombreDepartamento = this.lstDepartamentos.SelectedItem.ToString();
-            SqlParameter pamnombre =
-                new SqlParameter("@nombredepartamento", nombreDepartamento);
-            this.com.Parameters.Add(pamnombre);
+            int index = this.lstDepartamentos.SelectedIndex;
+            int idDepartamento = this.idsDepartamentosList[index];
+            string sql = "select APELLIDO from EMP where DEPT_NO=@iddepartamento";
+            SqlParameter pamniddepartamento =
+                new SqlParameter("@iddepartamento", idDepartamento);
+            this.com.Parameters.Add(pamniddepartamento);
+            //string sql = "select EMP.APELLIDO from EMP " +
+            //    " inner join DEPT on EMP.DEPT_NO = DEPT.DEPT_NO "
+            //    + " where DEPT.DNOMBRE=@nombredepartamento";
+            //string nombreDepartamento = this.lstDepartamentos.SelectedItem.ToString();
+            //SqlParameter pamnombre =
+            //    new SqlParameter("@nombredepartamento", nombreDepartamento);
+            //this.com.Parameters.Add(pamnombre);
             this.com.CommandType = CommandType.Text;
             this.com.CommandText = sql;
             this.cn.Open();
