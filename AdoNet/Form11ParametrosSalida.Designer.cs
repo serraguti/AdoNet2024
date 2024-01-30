@@ -52,6 +52,7 @@
             // 
             // cmbDepartamentos
             // 
+            cmbDepartamentos.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbDepartamentos.FormattingEnabled = true;
             cmbDepartamentos.Location = new Point(36, 75);
             cmbDepartamentos.Name = "cmbDepartamentos";
@@ -66,6 +67,7 @@
             btnMostrarDatos.TabIndex = 2;
             btnMostrarDatos.Text = "Mostrar datos";
             btnMostrarDatos.UseVisualStyleBackColor = true;
+            btnMostrarDatos.Click += btnMostrarDatos_Click;
             // 
             // label2
             // 
@@ -150,7 +152,7 @@
             Controls.Add(cmbDepartamentos);
             Controls.Add(label1);
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            Margin = new Padding(6, 6, 6, 6);
+            Margin = new Padding(6);
             Name = "Form11ParametrosSalida";
             Text = "Form11ParametrosSalida";
             ResumeLayout(false);
