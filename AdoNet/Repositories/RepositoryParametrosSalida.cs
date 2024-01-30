@@ -74,6 +74,7 @@ namespace AdoNet.Repositories
             }
             this.reader.Close();
             //ALMACENAMOS LOS PARAMETROS
+
             int suma = int.Parse(pamSuma.Value.ToString());
             int media = int.Parse(pamMedia.Value.ToString());
             int personas = int.Parse(pamPersonas.Value.ToString());
