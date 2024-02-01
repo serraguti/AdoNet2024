@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using AdoNet.Helpers;
 
 namespace AdoNet
 {
@@ -22,7 +23,7 @@ namespace AdoNet
         public Form01PrimerAdo()
         {
             InitializeComponent();
-            this.connectionString = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=HOSPITAL;Persist Security Info=True;User ID=SA;Password=MCSD2023;";
+            this.connectionString = HelperConfiguration.GetConnectionString();
             this.cn = new SqlConnection(this.connectionString);
             //VAMOS A RECUPERAR UN EVENTO DE LA CONEXION PARA QUE NOS 
             //INDIQUE SU CAMBIO DE ESTADO
